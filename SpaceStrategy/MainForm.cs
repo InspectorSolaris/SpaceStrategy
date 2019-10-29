@@ -13,7 +13,7 @@ namespace SpaceStrategy
 {
     public partial class MainForm : Form
     {
-        private GameState gameState { get; set; } = GameState.GenerateNew(21, 10);
+        private GameState GameState { get; set; } = GameState.GenerateNew(21, 10);
 
         public MainForm()
         {
@@ -29,15 +29,15 @@ namespace SpaceStrategy
 
         private void SetStaticDataSources()
         {
-            Planets.DataSource = gameState.Planets;
+            Planets.DataSource = GameState.Planets;
         }
 
         private void SetDynamicDataSources()
         {
             if(Planets.SelectedIndex != -1)
             {
-                Colonies.DataSource         = gameState.Planets[Planets.SelectedIndex].Colonies;
-                PlanetResourses.DataSource  = gameState.Planets[Planets.SelectedIndex].ResourseBunches;
+                Colonies.DataSource         = GameState.Planets[Planets.SelectedIndex].Colonies;
+                PlanetResourses.DataSource  = GameState.Planets[Planets.SelectedIndex].ResourseBunches;
             }
             else
             {
@@ -48,8 +48,8 @@ namespace SpaceStrategy
             if(Planets.SelectedIndex != -1 &&
                 Colonies.SelectedIndex != -1)
             {
-                Buildings.DataSource = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings;
-                StarShips.DataSource = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips;
+                Buildings.DataSource = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings;
+                StarShips.DataSource = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips;
 
                 ChoosenBuilding.DataSource = Buildings.DataSource;
             }
@@ -65,7 +65,7 @@ namespace SpaceStrategy
                 Colonies.SelectedIndex != -1 &&
                 Buildings.SelectedIndex != -1)
             {
-                Units.DataSource = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].Units;
+                Units.DataSource = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].Units;
             }
             else
             {
@@ -77,7 +77,7 @@ namespace SpaceStrategy
                 Buildings.SelectedIndex != -1 &&
                 Units.SelectedIndex != -1)
             {
-                UnitState.DataSource = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].Units[Units.SelectedIndex];
+                UnitState.DataSource = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].Units[Units.SelectedIndex];
             }
             else
             {
@@ -87,9 +87,9 @@ namespace SpaceStrategy
             if(Planets.SelectedIndex != -1 &&
                 Colonies.SelectedIndex != -1 &&
                 Buildings.SelectedIndex != -1 &&
-                gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].BuildingType == Class.Abstract.Building.Type.Storage)
+                GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex].BuildingType == Class.Abstract.Building.Type.Storage)
             {
-                BuildingResourses.DataSource = ((Storage)gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex]).ResourseBunches;
+                BuildingResourses.DataSource = ((Storage)GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex]).ResourseBunches;
             }
             else
             {
@@ -100,8 +100,8 @@ namespace SpaceStrategy
                 Colonies.SelectedIndex != -1 &&
                 StarShips.SelectedIndex != -1)
             {
-                StarShipColonies.DataSource = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex].Colonies;
-                StarShipUnits.DataSource    = gameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex].Units;
+                StarShipColonies.DataSource = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex].Colonies;
+                StarShipUnits.DataSource    = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex].Units;
             }
             else
             {

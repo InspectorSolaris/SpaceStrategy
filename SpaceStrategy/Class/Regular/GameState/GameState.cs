@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace SpaceStrategy.Class.Regular
 {
-    class GameState
+    partial class GameState
     {
         public GameState
             (
@@ -14,24 +15,11 @@ namespace SpaceStrategy.Class.Regular
             )
         {
             this.Planets = planets;
-
-            Resourses.ForEach(r => ResourseBunches.Add(new ResourseBunch(r, 0)));
         }
-
-        public List<Planet> Planets { get; private set; }
+        
+        public List<Planet> Planets { get; }
 
         public static Random Random { get; } = new Random();
-
-        public static List<Resourse> Resourses { get; private set; } = new List<Resourse>
-        {
-            new Resourse(1, "Watter", ""),
-            new Resourse(2, "Copper", ""),
-            new Resourse(3, "Silver", ""),
-            new Resourse(4, "Gold", ""),
-            new Resourse(5, "Platinum", "")
-        };
-
-        public static List<ResourseBunch> ResourseBunches { get; } = new List<ResourseBunch>();
 
         public static GameState GenerateNew
             (
@@ -44,6 +32,9 @@ namespace SpaceStrategy.Class.Regular
             double maxZ = 1000
             )
         {
+            maxAmount = Math.Min(128, maxAmount);
+            minAmount = Math.Max(001, minAmount);
+
             List<Planet> planets = new List<Planet>(Random.Next(minAmount, maxAmount));
 
             for(int i = 0; i < planets.Capacity; ++i)

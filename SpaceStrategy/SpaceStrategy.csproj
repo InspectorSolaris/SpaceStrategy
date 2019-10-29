@@ -61,7 +61,8 @@
     <Compile Include="Class\Regular\Colony\Colony.cs" />
     <Compile Include="Class\Regular\Colony\Colony.StarShipHolder.cs" />
     <Compile Include="Class\Regular\Factory.cs" />
-    <Compile Include="Class\Regular\GameState.cs" />
+    <Compile Include="Class\Regular\GameState\GameState.cs" />
+    <Compile Include="Class\Regular\GameState\GameState.Files.cs" />
     <Compile Include="Class\Regular\House.cs" />
     <Compile Include="Class\Regular\Implementation\BuildingHolder.cs" />
     <Compile Include="Class\Regular\Implementation\ColonyHolder.cs" />
