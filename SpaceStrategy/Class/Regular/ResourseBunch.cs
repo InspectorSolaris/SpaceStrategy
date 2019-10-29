@@ -28,5 +28,10 @@ namespace SpaceStrategy.Class.Regular
         {
             Amount -= amount;
         }
+
+        public override string ToString()
+        {
+            return $"{Resourse.Name}: {(int)Amount}";
+        }
     }
 }

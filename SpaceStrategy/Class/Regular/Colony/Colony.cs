@@ -10,15 +10,27 @@ namespace SpaceStrategy.Class.Regular
     {
         public Colony
             (
-            string name, int maxBuildingsOccupyingSpace, int curBuildingsOccupyingSpace, List<Building> buildings
+            string name,                                                                                // Colony
+            int maxBuildingsOccupyingSpace, int curBuildingsOccupyingSpace, List<Building> buildings,   // IBuildingHolder
+            int maxStarShipsOccupyingSpace, int curStarShipsOccupyingSpace, List<StarShip> starShips    // IStarShipHolder
             )
         {
             this.Name = name;
             this.MaxBuildingsOccupyingSpace = maxBuildingsOccupyingSpace;
             this.CurBuildingsOccupyingSpace = curBuildingsOccupyingSpace;
             this.Buildings = buildings;
+            this.MaxStarShipsOccupyingSpace = maxStarShipsOccupyingSpace;
+            this.CurStarShipsOccupyingSpace = curStarShipsOccupyingSpace;
+            this.StarShips = starShips;
         }
 
         public string Name { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+
     }
 }

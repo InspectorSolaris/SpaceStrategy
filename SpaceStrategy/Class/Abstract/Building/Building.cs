@@ -9,7 +9,8 @@ namespace SpaceStrategy.Class.Abstract
     {
         protected Building
             (
-            string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
+            string name, Type buildingType, int occupyingSpace,                                                                                                 // Building
+            int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                                                                           // IUnitHolder
             State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
             ) 
             : base(
@@ -37,5 +38,10 @@ namespace SpaceStrategy.Class.Abstract
         public Type BuildingType { get; protected set; }
 
         public int OccupyingSpace { get; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

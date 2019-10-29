@@ -9,7 +9,7 @@ namespace SpaceStrategy.Class.Regular
     {
         public Storage
             (
-            double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches,                                          // Storage                                                                                                   // House constructor
+            double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches,                                          // IResourseHolder                                                                                                   // House constructor
             string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
             State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
             )

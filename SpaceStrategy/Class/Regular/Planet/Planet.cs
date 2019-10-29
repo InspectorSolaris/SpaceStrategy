@@ -10,7 +10,10 @@ namespace SpaceStrategy.Class.Regular
     {
         public Planet
             (
-            double x, double y, double z, double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches, int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies, string name
+            double x, double y, double z,                                                                               // IObject
+            double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches,  // IResourseHolder
+            int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies,                        // IColonyHolder
+            string name
             )
         {
             this.X = x;
@@ -26,5 +29,10 @@ namespace SpaceStrategy.Class.Regular
         }
 
         public string Name { get; }
+
+        public override string ToString()
+        {
+            return $"{Name} ({(int)X}, {(int)Y}, {(int)Z})";
+        }
     }
 }

@@ -11,8 +11,11 @@ namespace SpaceStrategy.Class.Regular
     {
         public StarShip
             (
-            int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units, string name, double speed, double x, double y, double z, int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies, // StarShip
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding                                                                     // Buildable
+            int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                                                                           // IUnitHolder
+            string name, double speed,                                                                                                                          // StarShip
+            double x, double y, double z,                                                                                                                       // IObject
+            int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies,                                                                // IColonyHolder
+            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
             )
             : base(
                   buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
@@ -47,6 +50,11 @@ namespace SpaceStrategy.Class.Regular
             await Task.Delay(TimeSpan.FromSeconds(s));
 
             return Move(Colonies, planet);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

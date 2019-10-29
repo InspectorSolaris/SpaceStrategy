@@ -60,5 +60,10 @@ namespace SpaceStrategy.Class.Regular
         {
             return Health <= 0;
         }
+
+        public override string ToString()
+        {
+            return $"{Name}: ({Health}, {Strength}, {Endurance})";
+        }
     }
 }
