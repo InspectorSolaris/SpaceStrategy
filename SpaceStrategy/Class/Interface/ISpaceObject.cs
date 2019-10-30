@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceStrategy.Class.Interface
 {
-    interface IObject
+    interface ISpaceObject
     {
         double X { get; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SpaceStrategy.Class.Regular;
+using SpaceStrategy.Class.Regular.Implementation;
 
 namespace SpaceStrategy.Class.Abstract
 {
@@ -9,31 +10,24 @@ namespace SpaceStrategy.Class.Abstract
     {
         protected Building
             (
-            string name, Type buildingType, int occupyingSpace,                                                                                                 // Building
-            int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                                                                           // IUnitHolder
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
-            ) 
+            Type buildingType, int occupyingSpace, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
+            )
             : base(
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
-            this.Name = name;
             this.BuildingType = buildingType;
             this.OccupyingSpace = occupyingSpace;
-            this.MaxUnitsOccupyingSpace = maxUnitsOccupyingSpace;
-            this.CurUnitsOccupyingSpace = curUnitsOccupyingSpace;
-            this.Units = units;
+            this.UnitHolder = unitHolder;
         }
 
         public enum Type
         {
             House,
             Mine,
-            Factory,
-            Storage
+            Factory
         }
-
-        public string Name { get; }
 
         public Type BuildingType { get; protected set; }
 
@@ -41,7 +35,18 @@ namespace SpaceStrategy.Class.Abstract
 
         public override string ToString()
         {
-            return Name;
+            string result = "Unknown";
+
+            if(BuildingType != Type.House)
+            {
+                result = $"{Name} ({BuildingState}, {((ResourseBuilding)this).IsWorking})";
+            }
+            else
+            {
+                result = $"{Name} ({BuildingState})";
+            }
+
+            return result;
         }
     }
 }

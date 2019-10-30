@@ -7,6 +7,17 @@ namespace SpaceStrategy.Class.Regular.Implementation
 {
     class ResourseHolder : IResourseHolder
     {
+        public ResourseHolder
+            (
+            string name, double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches
+            )
+        {
+            this.Name = name;
+            this.MaxResoursesOccupyingSpace = maxResoursesOccupyingSpace;
+            this.CurResoursesOccupyingSpace = curResoursesOccupyingSpace;
+            this.ResourseBunches = resourseBunches;
+        }
+
         public string Name { get; }
 
         public double MaxResoursesOccupyingSpace { get; }
@@ -171,6 +182,11 @@ namespace SpaceStrategy.Class.Regular.Implementation
             }
 
             return false;
+        }
+
+        public ResourseBunch FindByResourseId(int id)
+        {
+            return ResourseBunches.Find(r => r.Resourse.Id == id);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,152 +8,60 @@ namespace SpaceStrategy.Class.Regular
 {
     partial class StarShip : IColonyHolder
     {
-        public int MaxColoniesOccupyingSpace { get; }
+        private ColonyHolder ColonyHolder { get; }
 
-        public int CurColoniesOccupyingSpace { get; private set; }
-
-        public List<Colony> Colonies { get; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void AddSingle(Colony t)
+        public int MaxColoniesOccupyingSpace
         {
-            CurColoniesOccupyingSpace += t.CurBuildingsOccupyingSpace;
-            Colonies.Add(t);
+            get
+            {
+                return ColonyHolder.MaxColoniesOccupyingSpace;
+            }
         }
 
-        private void RemoveSingle(Colony t)
+        public int CurColoniesOccupyingSpace
         {
-            Colonies.Remove(t);
-            CurColoniesOccupyingSpace -= t.CurBuildingsOccupyingSpace;
+            get
+            {
+                return ColonyHolder.CurColoniesOccupyingSpace;
+            }
         }
 
-        private bool IsEnoughSpace(Colony t)
+        public List<Colony> Colonies
         {
-            return CurColoniesOccupyingSpace + t.CurBuildingsOccupyingSpace <= MaxColoniesOccupyingSpace;
+            get
+            {
+                return ColonyHolder.Colonies;
+            }
         }
-
-        private bool IsEnoughSpace(List<Colony> ts)
-        {
-            int sum = 0;
-
-            ts.ForEach(t => sum += t.CurBuildingsOccupyingSpace);
-
-            return CurColoniesOccupyingSpace + sum <= MaxColoniesOccupyingSpace;
-        }
-
-        private bool Contains(Colony t)
-        {
-            return Colonies.Contains(t);
-        }
-
-        private bool Contains(List<Colony> ts)
-        {
-            bool contains = true;
-
-            ts.ForEach(t => contains = contains && Colonies.Contains(t));
-
-            return contains;
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public bool Add(Colony t)
         {
-            if(IsEnoughSpace(t))
-            {
-                AddSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Add(t);
         }
 
         public bool Add(List<Colony> ts)
         {
-            if(IsEnoughSpace(ts))
-            {
-                ts.ForEach(t => AddSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Add(ts);
         }
 
         public bool Move(Colony t, IGeneralHolder<Colony> generalHolder)
         {
-            if(Contains(t) &&
-                generalHolder.Add(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Move(t, generalHolder);
         }
 
         public bool Move(List<Colony> ts, IGeneralHolder<Colony> generalHolder)
         {
-            if(Contains(ts) &&
-                generalHolder.Add(ts))
-            {
-                Remove(ts);
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Move(ts, generalHolder);
         }
 
         public bool Remove(Colony t)
         {
-            if(Contains(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Remove(t);
         }
 
         public bool Remove(List<Colony> ts)
         {
-            if(Contains(ts))
-            {
-                ts.ForEach(t => RemoveSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return ColonyHolder.Remove(ts);
         }
     }
 }

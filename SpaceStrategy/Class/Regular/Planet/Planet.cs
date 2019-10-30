@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -10,22 +11,13 @@ namespace SpaceStrategy.Class.Regular
     {
         public Planet
             (
-            double x, double y, double z,                                                                               // IObject
-            double maxResoursesOccupyingSpace, double curResoursesOccupyingSpace, List<ResourseBunch> resourseBunches,  // IResourseHolder
-            int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies,                        // IColonyHolder
-            string name
+            string name, ResourseHolder resourseHolder, SpaceObject spaceObject, ColonyHolder colonyHolder
             )
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-            this.MaxResoursesOccupyingSpace = maxResoursesOccupyingSpace;
-            this.CurResoursesOccupyingSpace = curResoursesOccupyingSpace;
-            this.ResourseBunches = resourseBunches;
-            this.MaxColoniesOccupyingSpace = maxColoniesOccupyingSpace;
-            this.CurColoniesOccupyingSpace = curColoniesOccupyingSpace;
-            this.Colonies = colonies;
             this.Name = name;
+            this.ResourseHolder = resourseHolder;
+            this.SpaceObject = spaceObject;
+            this.ColonyHolder = colonyHolder;
         }
 
         public string Name { get; }

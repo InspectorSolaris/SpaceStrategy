@@ -1,36 +1,31 @@
 ﻿using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SpaceStrategy.Class.Regular
 {
-    partial class Colony
+    partial class Colony : Buildable
     {
         public Colony
             (
-            string name,                                                                                // Colony
-            int maxBuildingsOccupyingSpace, int curBuildingsOccupyingSpace, List<Building> buildings,   // IBuildingHolder
-            int maxStarShipsOccupyingSpace, int curStarShipsOccupyingSpace, List<StarShip> starShips    // IStarShipHolder
+            ResourseHolder resourseHolder, StarShipHolder starShipHolder, BuildingHolder buildingHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
+            : base(
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
+                  )
         {
-            this.Name = name;
-            this.MaxBuildingsOccupyingSpace = maxBuildingsOccupyingSpace;
-            this.CurBuildingsOccupyingSpace = curBuildingsOccupyingSpace;
-            this.Buildings = buildings;
-            this.MaxStarShipsOccupyingSpace = maxStarShipsOccupyingSpace;
-            this.CurStarShipsOccupyingSpace = curStarShipsOccupyingSpace;
-            this.StarShips = starShips;
+            this.ResourseHolder = resourseHolder;
+            this.StarShipHolder = starShipHolder;
+            this.BuildingHolder = buildingHolder;
         }
-
-        public string Name { get; }
 
         public override string ToString()
         {
-            return Name;
+            return $"{Name} ({BuildingState})";
         }
-
-
     }
 }

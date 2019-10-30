@@ -2,11 +2,13 @@
 using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SpaceStrategy.Class.Regular
 {
-    partial class Planet : IResourseHolder
+    partial class Colony : IResourseHolder
     {
         public ResourseHolder ResourseHolder { get; }
 

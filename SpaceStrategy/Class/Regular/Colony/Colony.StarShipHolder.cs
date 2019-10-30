@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,152 +10,60 @@ namespace SpaceStrategy.Class.Regular
 {
     partial class Colony : IStarShipHolder
     {
-        public int MaxStarShipsOccupyingSpace { get; }
+        private StarShipHolder StarShipHolder { get; }
 
-        public int CurStarShipsOccupyingSpace { get; private set; }
-
-        public List<StarShip> StarShips { get; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void AddSingle(StarShip t)
+        public int MaxStarShipsOccupyingSpace
         {
-            CurStarShipsOccupyingSpace += 1;
-            StarShips.Add(t);
+            get
+            {
+                return StarShipHolder.MaxStarShipsOccupyingSpace;
+            }
         }
 
-        private void RemoveSingle(StarShip t)
+        public int CurStarShipsOccupyingSpace
         {
-            StarShips.Remove(t);
-            CurStarShipsOccupyingSpace -= 1;
+            get
+            {
+                return StarShipHolder.CurStarShipsOccupyingSpace;
+            }
         }
 
-        private bool IsEnoughSpace(StarShip t)
+        public List<StarShip> StarShips
         {
-            return CurStarShipsOccupyingSpace + 1 <= MaxStarShipsOccupyingSpace;
+            get
+            {
+                return StarShipHolder.StarShips;
+            }
         }
-
-        private bool IsEnoughSpace(List<StarShip> ts)
-        {
-            int sum = 0;
-
-            ts.ForEach(t => sum += 1);
-
-            return CurStarShipsOccupyingSpace + sum <= MaxStarShipsOccupyingSpace;
-        }
-
-        private bool Contains(StarShip t)
-        {
-            return StarShips.Contains(t);
-        }
-
-        private bool Contains(List<StarShip> ts)
-        {
-            bool contains = true;
-
-            ts.ForEach(t => contains = contains && StarShips.Contains(t));
-
-            return contains;
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public bool Add(StarShip t)
         {
-            if(IsEnoughSpace(t))
-            {
-                AddSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Add(t);
         }
 
         public bool Add(List<StarShip> ts)
         {
-            if(IsEnoughSpace(ts))
-            {
-                ts.ForEach(t => AddSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Add(ts);
         }
 
         public bool Move(StarShip t, IGeneralHolder<StarShip> generalHolder)
         {
-            if(Contains(t) &&
-                generalHolder.Add(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Move(t, generalHolder);
         }
 
         public bool Move(List<StarShip> ts, IGeneralHolder<StarShip> generalHolder)
         {
-            if(Contains(ts) &&
-                generalHolder.Add(ts))
-            {
-                Remove(ts);
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Move(ts, generalHolder);
         }
 
         public bool Remove(StarShip t)
         {
-            if(Contains(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Remove(t);
         }
 
         public bool Remove(List<StarShip> ts)
         {
-            if(Contains(ts))
-            {
-                ts.ForEach(t => RemoveSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return StarShipHolder.Remove(ts);
         }
     }
 }

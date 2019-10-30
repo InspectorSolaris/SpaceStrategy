@@ -23,7 +23,7 @@ namespace SpaceStrategy.Class.Regular
         {
             Amount += amount;
         }
-        
+
         public void Remove(double amount)
         {
             Amount -= amount;

@@ -1,5 +1,6 @@
 ﻿using SpaceStrategy.Class.Interface;
 using SpaceStrategy.Class.Regular;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,152 +9,60 @@ namespace SpaceStrategy.Class.Abstract
 {
     abstract partial class Building : IUnitHolder
     {
-        public int MaxUnitsOccupyingSpace { get; }
+        private UnitHolder UnitHolder { get; }
 
-        public int CurUnitsOccupyingSpace { get; private set; }
-
-        public List<Unit> Units { get; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void AddSingle(Unit t)
+        public int MaxUnitsOccupyingSpace
         {
-            CurUnitsOccupyingSpace += 1;
-            Units.Add(t);
+            get
+            {
+                return UnitHolder.MaxUnitsOccupyingSpace;
+            }
         }
 
-        private void RemoveSingle(Unit t)
+        public int CurUnitsOccupyingSpace
         {
-            Units.Remove(t);
-            CurUnitsOccupyingSpace -= 1;
+            get
+            {
+                return UnitHolder.CurUnitsOccupyingSpace;
+            }
         }
 
-        private bool IsEnoughSpace(Unit t)
+        public List<Unit> Units
         {
-            return CurUnitsOccupyingSpace + 1 <= MaxUnitsOccupyingSpace;
+            get
+            {
+                return UnitHolder.Units;
+            }
         }
-
-        private bool IsEnoughSpace(List<Unit> ts)
-        {
-            int sum = 0;
-
-            ts.ForEach(t => sum += 1);
-
-            return CurUnitsOccupyingSpace + sum <= MaxUnitsOccupyingSpace;
-        }
-
-        private bool Contains(Unit t)
-        {
-            return Units.Contains(t);
-        }
-
-        private bool Contains(List<Unit> ts)
-        {
-            bool contains = true;
-
-            ts.ForEach(t => contains = contains && Units.Contains(t));
-
-            return contains;
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public bool Add(Unit t)
         {
-            if(IsEnoughSpace(t))
-            {
-                AddSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Add(t);
         }
 
         public bool Add(List<Unit> ts)
         {
-            if(IsEnoughSpace(ts))
-            {
-                ts.ForEach(t => AddSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Add(ts);
         }
 
         public bool Move(Unit t, IGeneralHolder<Unit> generalHolder)
         {
-            if(Contains(t) &&
-                generalHolder.Add(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Move(t, generalHolder);
         }
 
         public bool Move(List<Unit> ts, IGeneralHolder<Unit> generalHolder)
         {
-            if(Contains(ts) &&
-                generalHolder.Add(ts))
-            {
-                Remove(ts);
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Move(ts, generalHolder);
         }
 
         public bool Remove(Unit t)
         {
-            if(Contains(t))
-            {
-                RemoveSingle(t);
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Remove(t);
         }
 
         public bool Remove(List<Unit> ts)
         {
-            if(Contains(ts))
-            {
-                ts.ForEach(t => RemoveSingle(t));
-
-                return true;
-            }
-
-            return false;
+            return UnitHolder.Remove(ts);
         }
     }
 }

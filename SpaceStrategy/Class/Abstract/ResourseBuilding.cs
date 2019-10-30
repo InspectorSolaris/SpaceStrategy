@@ -1,28 +1,30 @@
 ﻿using SpaceStrategy.Class.Regular;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SpaceStrategy.Class.Abstract
 {
-    abstract class ResourseBuilding : Building
+    abstract partial class ResourseBuilding : Building
     {
         protected ResourseBuilding
             (
-            double damageRate, double strengthMultipler, double enduranceMultipler, Storage storage,                                                            // ResourseBuilding                                                                                                   // House constructor
-            string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
+            double damageRate, double strengthMultipler, double enduranceMultipler,
+            Type buildingType, int occupyingSpace, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
             : base(
-                  name, buildingType, occupyingSpace, maxUnitsOccupyingSpace, curUnitsOccupyingSpace, units,        // Building
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  buildingType, occupyingSpace, unitHolder,
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
             this.DamageRate = damageRate;
             this.StrengthMultipler = strengthMultipler;
             this.EnduranceMultipler = enduranceMultipler;
-            this.Storage = storage;
         }
+
+        public bool IsWorking { get; protected set; }
 
         public double DamageRate { get; }
         
@@ -30,13 +32,11 @@ namespace SpaceStrategy.Class.Abstract
         
         public double EnduranceMultipler { get; }
 
-        public Storage Storage { get; }
+        public abstract bool ProduceResourse(ResourseHolder resourseHolderForRaw, ResourseHolder resourseHolderForProduct);
 
-        public abstract bool ProduceResourse();
-
-        public bool StoreResourse(Storage storage)
+        public void ChangeIsWorkingState()
         {
-            return Storage.Move(Storage.ResourseBunches, storage);
+            IsWorking = !IsWorking;
         }
     }
 }

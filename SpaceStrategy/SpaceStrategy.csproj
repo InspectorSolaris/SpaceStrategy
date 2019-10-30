@@ -53,19 +53,22 @@
     <Compile Include="Class\Interface\IBuildingHolder.cs" />
     <Compile Include="Class\Interface\IColonyHolder.cs" />
     <Compile Include="Class\Interface\IGeneralHolder.cs" />
-    <Compile Include="Class\Interface\IObject.cs" />
+    <Compile Include="Class\Interface\ISpaceObject.cs" />
     <Compile Include="Class\Interface\IResourseHolder.cs" />
     <Compile Include="Class\Interface\IStarShipHolder.cs" />
     <Compile Include="Class\Interface\IUnitHolder.cs" />
     <Compile Include="Class\Regular\Colony\Colony.BuildingHolder.cs" />
     <Compile Include="Class\Regular\Colony\Colony.cs" />
+    <Compile Include="Class\Regular\Colony\Colony.ResourseHolder.cs" />
     <Compile Include="Class\Regular\Colony\Colony.StarShipHolder.cs" />
     <Compile Include="Class\Regular\Factory.cs" />
     <Compile Include="Class\Regular\GameState\GameState.cs" />
     <Compile Include="Class\Regular\GameState\GameState.Files.cs" />
+    <Compile Include="Class\Regular\GameState\GameState.OnClickEvents.cs" />
     <Compile Include="Class\Regular\House.cs" />
     <Compile Include="Class\Regular\Implementation\BuildingHolder.cs" />
     <Compile Include="Class\Regular\Implementation\ColonyHolder.cs" />
+    <Compile Include="Class\Regular\Implementation\SpaceObject.cs" />
     <Compile Include="Class\Regular\Implementation\ResourseHolder.cs" />
     <Compile Include="Class\Regular\Implementation\StarShipHolder.cs" />
     <Compile Include="Class\Regular\Implementation\UnitHolder.cs" />
@@ -80,8 +83,15 @@
     <Compile Include="Class\Regular\StarShip\StarShip.cs" />
     <Compile Include="Class\Regular\StarShip\StarShip.Object.cs" />
     <Compile Include="Class\Regular\StarShip\StarShip.UnitHolder.cs" />
-    <Compile Include="Class\Regular\Storage\Storage.cs" />
-    <Compile Include="Class\Regular\Storage\Storage.ResourseHolder.cs" />
+    <Compile Include="Class\Type\Abstract\BuildableType.cs" />
+    <Compile Include="Class\Type\Abstract\BuildingType.cs" />
+    <Compile Include="Class\Type\Abstract\ResourseBuildingType.cs" />
+    <Compile Include="Class\Type\Regular\ColonyType.cs" />
+    <Compile Include="Class\Type\Regular\FactoryType.cs" />
+    <Compile Include="Class\Type\Regular\HouseType.cs" />
+    <Compile Include="Class\Type\Regular\MineType.cs" />
+    <Compile Include="Class\Type\Regular\StarShipType.cs" />
+    <Compile Include="Class\Type\Regular\UnitType.cs" />
     <Compile Include="Class\Regular\Unit.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -117,5 +127,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

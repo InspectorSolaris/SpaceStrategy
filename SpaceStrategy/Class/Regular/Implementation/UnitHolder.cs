@@ -7,6 +7,17 @@ namespace SpaceStrategy.Class.Regular.Implementation
 {
     class UnitHolder : IUnitHolder
     {
+        public UnitHolder
+            (
+            string name, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units
+            )
+        {
+            this.Name = name;
+            this.MaxUnitsOccupyingSpace = maxUnitsOccupyingSpace;
+            this.CurUnitsOccupyingSpace = curUnitsOccupyingSpace;
+            this.Units = units;
+        }
+
         public string Name { get; }
 
         public int MaxUnitsOccupyingSpace { get; }

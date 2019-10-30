@@ -9,6 +9,17 @@ namespace SpaceStrategy.Class.Regular.Implementation
 {
     class StarShipHolder : IStarShipHolder
     {
+        public StarShipHolder
+            (
+            string name, int maxStarShipsOccupyingSpace, int curStarShipsOccupyingSpace, List<StarShip> starShips
+            )
+        {
+            this.Name = name;
+            this.MaxStarShipsOccupyingSpace = maxStarShipsOccupyingSpace;
+            this.CurStarShipsOccupyingSpace = curStarShipsOccupyingSpace;
+            this.StarShips = starShips;
+        }
+
         public string Name { get; }
 
         public int MaxStarShipsOccupyingSpace { get; }

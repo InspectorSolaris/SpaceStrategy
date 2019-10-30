@@ -1,16 +1,37 @@
 ﻿using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SpaceStrategy.Class.Regular
 {
-    partial class StarShip : IObject
+    partial class StarShip : ISpaceObject
     {
-        public double X { get; private set; }
+        private SpaceObject SpaceObject { get; }
 
-        public double Y { get; private set; }
+        public double X
+        {
+            get
+            {
+                return SpaceObject.X;
+            }
+        }
 
-        public double Z { get; private set; }
+        public double Y
+        {
+            get
+            {
+                return SpaceObject.Y;
+            }
+        }
+
+        public double Z
+        {
+            get
+            {
+                return SpaceObject.Z;
+            }
+        }
     }
 }

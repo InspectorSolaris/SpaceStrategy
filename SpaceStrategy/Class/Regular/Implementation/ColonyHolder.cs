@@ -7,6 +7,17 @@ namespace SpaceStrategy.Class.Regular.Implementation
 {
     class ColonyHolder : IColonyHolder
     {
+        public ColonyHolder
+            (
+            string name, int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies
+            )
+        {
+            this.Name = name;
+            this.MaxColoniesOccupyingSpace = maxColoniesOccupyingSpace;
+            this.CurColoniesOccupyingSpace = curColoniesOccupyingSpace;
+            this.Colonies = colonies;
+        }
+
         public string Name { get; }
 
         public int MaxColoniesOccupyingSpace { get; }

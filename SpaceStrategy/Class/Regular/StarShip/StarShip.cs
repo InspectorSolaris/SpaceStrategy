@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Interface;
+using SpaceStrategy.Class.Regular.Implementation;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -11,31 +12,19 @@ namespace SpaceStrategy.Class.Regular
     {
         public StarShip
             (
-            int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                                                                           // IUnitHolder
-            string name, double speed,                                                                                                                          // StarShip
-            double x, double y, double z,                                                                                                                       // IObject
-            int maxColoniesOccupyingSpace, int curColoniesOccupyingSpace, List<Colony> colonies,                                                                // IColonyHolder
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
+            double speed, ColonyHolder colonyHolder, SpaceObject spaceObject, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
             : base(
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
-            this.MaxUnitsOccupyingSpace = maxUnitsOccupyingSpace;
-            this.CurUnitsOccupyingSpace = curUnitsOccupyingSpace;
-            this.Units = units;
-            this.Name = name;
             this.Speed = speed;
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-            this.MaxColoniesOccupyingSpace = maxColoniesOccupyingSpace;
-            this.CurColoniesOccupyingSpace = curColoniesOccupyingSpace;
-            this.Colonies = colonies;
+            this.ColonyHolder = colonyHolder;
+            this.SpaceObject = spaceObject;
+            this.UnitHolder = unitHolder;
         }
 
-        public string Name { get; }
-        
         public double Speed { get; private set; }
 
         public async Task<bool> Colonize(Planet planet)

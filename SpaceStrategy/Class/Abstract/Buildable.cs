@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Regular;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace SpaceStrategy.Class.Abstract
 {
-    abstract class Buildable
+    abstract partial class Buildable
     {
         protected Buildable
             (
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
         {
+            this.Name = name;
             this.BuildingState = buildingState;
             this.TimeToBuildSec = timeToBuildSec;
             this.TimeToDestroySec = timeToDestroySec;
-            this.ResoursesForBuildingNeeded = resoursesForBuildingNeeded;
-            this.StorageForBuilding = storageForBuilding;
+            this.NecessaryResourses = necessaryResourses;
         }
 
         public enum State
@@ -29,33 +30,25 @@ namespace SpaceStrategy.Class.Abstract
             Destroyed
         }
 
-        public State BuildingState { get; }
+        public string Name { get; }
+
+        public State BuildingState { get; private set; }
 
         private TimeSpan TimeToBuildSec { get; }
 
         private TimeSpan TimeToDestroySec { get; }
 
-        public List<ResourseBunch> ResoursesForBuildingNeeded { get; }
+        public List<ResourseBunch> NecessaryResourses { get; }
 
-        private Storage StorageForBuilding { get; }
-
-        public bool AddResourseForBuild(ResourseBunch resourseBunch)
+        public async Task<bool> Build(ResourseHolder resourseSource)
         {
-            return BuildingState == State.Destroyed && StorageForBuilding.Add(resourseBunch);
-        }
-        
-        public bool AddResourseForBuild(List<ResourseBunch> resourseBunches)
-        {
-            return BuildingState == State.Destroyed && StorageForBuilding.Add(resourseBunches);
-        }
-
-        public async Task<bool> Build()
-        {
-            if(IsEnoughResourses() && BuildingState == State.Destroyed)
+            if(IsEnoughResourses(resourseSource) && BuildingState == State.Destroyed)
             {
+                BuildingState = State.Building;
+
                 await Task.Delay(TimeToBuildSec);
 
-                StorageForBuilding.Remove(StorageForBuilding.ResourseBunches);
+                BuildingState = State.Builded;
 
                 return true;
             }
@@ -67,7 +60,11 @@ namespace SpaceStrategy.Class.Abstract
         {
             if(BuildingState == State.Builded)
             {
+                BuildingState = State.Destroying;
+
                 await Task.Delay(TimeToDestroySec);
+
+                BuildingState = State.Destroyed;
 
                 return true;
             }
@@ -75,11 +72,11 @@ namespace SpaceStrategy.Class.Abstract
             return false;
         }
 
-        private bool IsEnoughResourses()
+        private bool IsEnoughResourses(ResourseHolder resourseSource)
         {
             bool isEnough = true;
 
-            ResoursesForBuildingNeeded.ForEach(r => isEnough = isEnough && StorageForBuilding.FindByResourseId(r.Resourse.Id).Amount - r.Amount >= 0);
+            NecessaryResourses.ForEach(r => isEnough = isEnough && resourseSource.FindByResourseId(r.Resourse.Id).Amount - r.Amount >= 0);
 
             return isEnough;
         }

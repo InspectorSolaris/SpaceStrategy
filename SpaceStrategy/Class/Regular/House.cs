@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Abstract;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,13 +10,13 @@ namespace SpaceStrategy.Class.Regular
     {
         public House
             (
-            double healRate,                                                                                                                                    // House
-            string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
+            double healRate,
+            int occupyingSpace, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
             : base(
-                  name, buildingType, occupyingSpace, maxUnitsOccupyingSpace, curUnitsOccupyingSpace, units,        // Building
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  Type.House, occupyingSpace, unitHolder,
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
             this.HealRate = healRate;

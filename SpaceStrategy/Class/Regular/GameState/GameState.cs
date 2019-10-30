@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.IO;
+using SpaceStrategy.Class.Regular.Implementation;
+using System.Diagnostics;
+using System.Threading;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -14,9 +17,13 @@ namespace SpaceStrategy.Class.Regular
             List<Planet> planets
             )
         {
+            InitData();
+
             this.Planets = planets;
         }
         
+        private static bool Initialized { get; set; }
+
         public List<Planet> Planets { get; }
 
         public static Random Random { get; } = new Random();
@@ -26,12 +33,13 @@ namespace SpaceStrategy.Class.Regular
             int maxAmount = 21,
             int minAmount = 10,
             int maxCol = 1000000,
-            double maxRes = 1000000,
             double maxX = 1000,
             double maxY = 1000,
             double maxZ = 1000
             )
         {
+            InitData();
+
             maxAmount = Math.Min(128, maxAmount);
             minAmount = Math.Max(001, minAmount);
 
@@ -43,57 +51,98 @@ namespace SpaceStrategy.Class.Regular
 
                 Resourses.ForEach(r => planetResourseBunches.Add(new ResourseBunch(r, Random.Next(1000, 1000000))));
 
-                planets.Add(new Planet(
-                    maxX * Random.NextDouble(),
-                    maxY * Random.NextDouble(),
-                    maxZ * Random.NextDouble(),
-                    maxRes * Random.NextDouble(),
-                    planetResourseBunches.Sum(x => x.Amount),
-                    planetResourseBunches,
-                    maxCol * Random.Next(),
-                    0,
-                    new List<Colony>(),
-                    $"Planet " + (i + 1).ToString("D3")
-                    ));
+                planets.Add(
+                    new Planet(
+                        $"Planet " + (i + 1).ToString("D3"),
+                        new ResourseHolder(
+                            $"Planet " + (i + 1).ToString("D3") + " ResourseHolder",
+                            1000000,
+                            planetResourseBunches.Sum(x => x.Amount),
+                            planetResourseBunches
+                            ),
+                        new SpaceObject(
+                            maxX * Random.NextDouble(),
+                            maxY * Random.NextDouble(),
+                            maxZ * Random.NextDouble()
+                            ),
+                        new ColonyHolder(
+                            $"Planet " + (i + 1).ToString("D3") + " ColonyHolder",
+                            maxCol * Random.Next(),
+                            0,
+                            new List<Colony>()
+                            )
+                        )
+                    );
             }
+
+            string colonyName = "Main Colony";
 
             List<ResourseBunch> colonyResourseBunches = new List<ResourseBunch>();
 
             Resourses.ForEach(r => colonyResourseBunches.Add(new ResourseBunch(r, 100)));
 
-            List<Building> colonyBuildings = new List<Building>
-            {
-                new Storage(
-                    100,
-                    colonyResourseBunches.Sum(x => x.Amount),
-                    colonyResourseBunches,
-                    "Main Colony Storage",
-                    Building.Type.Storage,
-                    10,
-                    5,
-                    0,
-                    new List<Unit>(),
-                    Buildable.State.Builded,
-                    TimeSpan.FromSeconds(5),
-                    TimeSpan.FromSeconds(5),
-                    new List<ResourseBunch>(),
-                    null
-                    )
-            };
-
             planets[0].Colonies.Add(
                 new Colony(
-                    "Main Colony",
-                    100,
-                    colonyBuildings.Sum(x => x.OccupyingSpace),
-                    colonyBuildings,
-                    2,
-                    0,
-                    new List<StarShip>()
+                    new ResourseHolder(
+                        $"{colonyName} ResourseHolder",
+                        colonyResourseBunches.Sum(x => x.Amount) * 2,
+                        colonyResourseBunches.Sum(x => x.Amount),
+                        colonyResourseBunches
+                        ),
+                    new StarShipHolder(
+                        $"{colonyName} StarShipHolder",
+                        2,
+                        0,
+                        new List<StarShip>()
+                        ),
+                    new BuildingHolder(
+                        $"{colonyName} BuildingHolder",
+                        100,
+                        0,
+                        new List<Building>()
+                        ),
+                    colonyName,
+                    Buildable.State.Builded,
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(0),
+                    null
                     )
                 );
 
             return new GameState(planets);
+        }
+
+        public void GameTick()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+
+            stopwatch.Start();
+
+            foreach(Planet p in Planets)
+            {
+                foreach(Colony c in p.Colonies)
+                {
+                    foreach(Building b in c.Buildings)
+                    {
+                        switch(b.BuildingType)
+                        {
+                            case Building.Type.House:
+                                ((House)b).Heal();
+                                break;
+                            case Building.Type.Mine:
+                                ((Mine)b).ProduceResourse(p.ResourseHolder, c.ResourseHolder);
+                                break;
+                            case Building.Type.Factory:
+                                ((Factory)b).ProduceResourse(c.ResourseHolder, c.ResourseHolder);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            stopwatch.Stop();
+
+            Thread.Sleep(TimeSpan.FromSeconds(1) - stopwatch.Elapsed);
         }
     }
 }

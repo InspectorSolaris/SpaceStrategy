@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Abstract;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,21 +10,20 @@ namespace SpaceStrategy.Class.Regular
     {
         public Factory
             (
-            Resourse rawResourse, Resourse productResourse, double factoryRate, Storage storageForRaw,                                                          // Factory
-            double damageRate, double strengthMultipler, double enduranceMultipler, Storage storage,                                                            // ResourseBuilding                                                                                                   // House constructor
-            string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
+            Resourse rawResourse, Resourse productResourse, double factoryRate,
+            double damageRate, double strengthMultipler, double enduranceMultipler,
+            int occupyingSpace, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
             : base(
-                  damageRate, strengthMultipler, enduranceMultipler, storage,                                       // ResourseBuilding
-                  name, buildingType, occupyingSpace, maxUnitsOccupyingSpace, curUnitsOccupyingSpace, units,        // Building
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  damageRate, strengthMultipler, enduranceMultipler,
+                  Type.Factory, occupyingSpace, unitHolder,
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
             this.RawResourse = rawResourse;
             this.ProductResourse = productResourse;
             this.FactoryRate = factoryRate;
-            this.StorageForRaw = storageForRaw;
         }
 
         public Resourse RawResourse { get; }
@@ -32,21 +32,19 @@ namespace SpaceStrategy.Class.Regular
 
         public double FactoryRate { get; }
 
-        public Storage StorageForRaw { get; }
-
-        public bool StoreRawResourse(Storage storage)
+        public override bool ProduceResourse(ResourseHolder resourseHolderForRaw, ResourseHolder resourseHolderForProduct)
         {
-            return storage.Move(storage.ResourseBunches, StorageForRaw);
-        }
+            if(!IsWorking)
+            {
+                return false;
+            }
 
-        public override bool ProduceResourse()
-        {
             double amount = 0;
 
             Units.ForEach(u => amount += FactoryRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance));
 
-            bool removed = StorageForRaw.Remove(new ResourseBunch(RawResourse, amount));
-            bool added = Storage.Add(new ResourseBunch(ProductResourse, FactoryRate * amount));
+            bool removed = resourseHolderForRaw.Remove(new ResourseBunch(RawResourse, amount));
+            bool added = resourseHolderForProduct.Add(new ResourseBunch(ProductResourse, FactoryRate * amount));
 
             if(removed && added)
             {
@@ -54,11 +52,11 @@ namespace SpaceStrategy.Class.Regular
             }
             if(removed)
             {
-                StorageForRaw.Add(new ResourseBunch(RawResourse, amount));
+                resourseHolderForRaw.Add(new ResourseBunch(RawResourse, amount));
             }
             if(added)
             {
-                Storage.Remove(new ResourseBunch(ProductResourse, FactoryRate * amount));
+                resourseHolderForProduct.Remove(new ResourseBunch(ProductResourse, FactoryRate * amount));
             }
 
             return false;

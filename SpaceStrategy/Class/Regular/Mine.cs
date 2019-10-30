@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Abstract;
+using SpaceStrategy.Class.Regular.Implementation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,16 +8,17 @@ namespace SpaceStrategy.Class.Regular
 {
     class Mine : ResourseBuilding
     {
-        public Mine(
-            Resourse miningResourse, double mineRate,                                                                                                           // Mine
-            double damageRate, double strengthMultipler, double enduranceMultipler, Storage storage,                                                            // ResourseBuilding                                                                                                   // House constructor
-            string name, Type buildingType, int occupyingSpace, int maxUnitsOccupyingSpace, int curUnitsOccupyingSpace, List<Unit> units,                       // Building
-            State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> resoursesForBuildingNeeded, Storage storageForBuilding // Buildable
+        public Mine
+            (
+            Resourse miningResourse, double mineRate,
+            double damageRate, double strengthMultipler, double enduranceMultipler,
+            int occupyingSpace, UnitHolder unitHolder,
+            string name, State buildingState, TimeSpan timeToBuildSec, TimeSpan timeToDestroySec, List<ResourseBunch> necessaryResourses
             )
             : base(
-                  damageRate, strengthMultipler, enduranceMultipler, storage,                                       // ResourseBuilding
-                  name, buildingType, occupyingSpace, maxUnitsOccupyingSpace, curUnitsOccupyingSpace, units,        // Building
-                  buildingState, timeToBuildSec, timeToDestroySec, resoursesForBuildingNeeded, storageForBuilding   // Buildable
+                  damageRate, strengthMultipler, enduranceMultipler,
+                  Type.Mine, occupyingSpace, unitHolder,
+                  name, buildingState, timeToBuildSec, timeToDestroySec, necessaryResourses
                   )
         {
             this.MiningResourse = miningResourse;
@@ -27,13 +29,18 @@ namespace SpaceStrategy.Class.Regular
 
         public double MineRate { get; }
 
-        public override bool ProduceResourse()
+        public override bool ProduceResourse(ResourseHolder resourseHolderForRaw, ResourseHolder resourseHolderForProduct)
         {
+            if(!IsWorking)
+            {
+                return false;
+            }
+
             double amount = 0;
 
             Units.ForEach(u => amount += MineRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance));
 
-            return Storage.Add(new ResourseBunch(MiningResourse, amount));
+            return resourseHolderForRaw.Move(new ResourseBunch(MiningResourse, amount), resourseHolderForProduct);
         }
     }
 }
