@@ -7,6 +7,8 @@ using System.IO;
 using SpaceStrategy.Class.Regular.Implementation;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -30,8 +32,8 @@ namespace SpaceStrategy.Class.Regular
 
         public static GameState GenerateNew
             (
-            int maxAmount = 21,
-            int minAmount = 10,
+            int maxAmount = 8,
+            int minAmount = 4,
             int maxCol = 1000000,
             double maxX = 1000,
             double maxY = 1000,
@@ -43,9 +45,9 @@ namespace SpaceStrategy.Class.Regular
             maxAmount = Math.Min(128, maxAmount);
             minAmount = Math.Max(001, minAmount);
 
-            List<Planet> planets = new List<Planet>(Random.Next(minAmount, maxAmount));
+            List<Planet> planets = new List<Planet>();
 
-            for(int i = 0; i < planets.Capacity; ++i)
+            for(int i = 0; i < Random.Next(minAmount, maxAmount); ++i)
             {
                 List<ResourseBunch> planetResourseBunches = new List<ResourseBunch>();
 
@@ -112,12 +114,8 @@ namespace SpaceStrategy.Class.Regular
             return new GameState(planets);
         }
 
-        public void GameTick()
+        public void  GameTick()
         {
-            Stopwatch stopwatch = new Stopwatch();
-
-            stopwatch.Start();
-
             foreach(Planet p in Planets)
             {
                 foreach(Colony c in p.Colonies)
@@ -139,10 +137,6 @@ namespace SpaceStrategy.Class.Regular
                     }
                 }
             }
-
-            stopwatch.Stop();
-
-            Thread.Sleep(TimeSpan.FromSeconds(1) - stopwatch.Elapsed);
         }
     }
 }

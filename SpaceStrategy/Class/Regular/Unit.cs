@@ -1,4 +1,5 @@
 ﻿using SpaceStrategy.Class.Abstract;
+using SpaceStrategy.Class.Type.Regular;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,23 @@ namespace SpaceStrategy.Class.Regular
             this.Health = maxHealth;
             this.Strength = strength;
             this.Endurance = endurance;
+        }
+
+        public static Unit Create
+            (
+            UnitType t, int ind
+            )
+        {
+            return new Unit(
+                t.MaxHealth,
+                t.Strength,
+                t.Endurance,
+                $"Unit " + ind,
+                State.Destroyed,
+                t.TimeToBuildSec,
+                t.TimeToDestroySec,
+                t.NecessaryResourses
+                );
         }
 
         public double MaxHealth { get; }

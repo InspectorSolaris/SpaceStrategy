@@ -12,11 +12,9 @@ namespace SpaceStrategy.Class.Regular
 {
     partial class GameState
     {
-        public void OnBuildingsDoubleClick(int planetInd, int colonyInd, int buildingInd)
+        public void OnBuildingsDoubleClick(Building b)
         {
-            Building b = Planets[planetInd].Colonies[colonyInd].Buildings[buildingInd];
-
-            if(b.BuildingType != Building.Type.House)
+            if(b != null && b.BuildingType != Building.Type.House)
             {
                 ResourseBuilding rb = (ResourseBuilding)b;
 
@@ -24,17 +22,45 @@ namespace SpaceStrategy.Class.Regular
             }
         }
 
-        public void OnAddBuildingToPlanetColony(int planetInd, int colonyInd, int buildingChoosenInd)
+        public void OnBuildBuildingClick(Building b, Colony c)
         {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingChoosenInd == -1)
+            if(b != null && c != null && c.Buildings.Contains(b))
+            {
+                b.Build(c.ResourseHolder);
+            }
+        }
+
+        public void OnDestroyBuildingClick(Building b)
+        {
+            if(b != null)
+            {
+                b.Destory();
+            }
+        }
+
+        public void OnBuildUnitClick(Unit u, Building b, Colony c)
+        {
+            if(u != null && b != null && c != null &&
+                c.Buildings.Contains(b) && b.Units.Contains(u))
+            {
+                u.Build(c.ResourseHolder);
+            }
+        }
+
+        public void OnDestroyUnitClick(Unit u)
+        {
+            if(u != null)
+            {
+                u.Destory();
+            }
+        }
+
+        public void OnAddBuildingToPlanetColony(Colony c, BuildingType bt)
+        {
+            if(c == null || bt == null)
             {
                 return;
             }
-
-            BuildingType bt = BuildingTypes[buildingChoosenInd];
-            Colony c = Planets[planetInd].Colonies[colonyInd];
 
             switch(bt.Type)
             {
@@ -42,21 +68,7 @@ namespace SpaceStrategy.Class.Regular
                     HouseType ht = (HouseType)bt;
 
                     c.Add(
-                        new House(
-                            ht.HealRate,
-                            ht.OccupyingSpace,
-                            new UnitHolder(
-                                "UnitHolder",
-                                ht.MaxUnitsOccupyingSpace,
-                                0,
-                                new List<Unit>()
-                                ),
-                            $"House " + c.Buildings.Sum(x => x.BuildingType == Building.Type.House ? 1 : 0).ToString("D3"),
-                            Buildable.State.Destroyed,
-                            ht.TimeToBuildSec,
-                            ht.TimeToDestroySec,
-                            ht.NecessaryResourses
-                            )
+                        House.Create(ht, c.Buildings.Sum(x => x.BuildingType == Building.Type.House ? 1 : 0))
                         );
 
                     break;
@@ -64,25 +76,7 @@ namespace SpaceStrategy.Class.Regular
                     MineType mt = (MineType)bt;
 
                     c.Add(
-                        new Mine(
-                            Resourses[mt.MiningResourseId],
-                            mt.MineRate,
-                            mt.DamageRate,
-                            mt.StrengthMultipler,
-                            mt.EnduranceMultipler,
-                            mt.OccupyingSpace,
-                            new UnitHolder(
-                                "UnitHolder",
-                                mt.MaxUnitsOccupyingSpace,
-                                0,
-                                new List<Unit>()
-                                ),
-                            $"Mine " + c.Buildings.Sum(x => x.BuildingType == Building.Type.Mine ? 1 : 0).ToString("D3"),
-                            Buildable.State.Destroyed,
-                            mt.TimeToBuildSec,
-                            mt.TimeToDestroySec,
-                            mt.NecessaryResourses
-                            )
+                        Mine.Create(mt, c.Buildings.Sum(x => x.BuildingType == Building.Type.Mine ? 1 : 0))
                         );
 
                     break;
@@ -90,26 +84,7 @@ namespace SpaceStrategy.Class.Regular
                     FactoryType ft = (FactoryType)bt;
 
                     c.Add(
-                        new Factory(
-                            Resourses[ft.RawResourseId],
-                            Resourses[ft.ProductResourseId],
-                            ft.FactoryRate,
-                            ft.DamageRate,
-                            ft.StrengthMultipler,
-                            ft.EnduranceMultipler,
-                            ft.OccupyingSpace,
-                            new UnitHolder(
-                                "UnitHolder",
-                                ft.MaxUnitsOccupyingSpace,
-                                0,
-                                new List<Unit>()
-                                ),
-                            $"Factory " + c.Buildings.Sum(x => x.BuildingType == Building.Type.Factory ? 1 : 0).ToString("D3"),
-                            Buildable.State.Destroyed,
-                            ft.TimeToBuildSec,
-                            ft.TimeToDestroySec,
-                            ft.NecessaryResourses
-                            )
+                        Factory.Create(ft, c.Buildings.Sum(x => x.BuildingType == Building.Type.Factory ? 1 : 0))
                         );
 
                     break;
@@ -117,95 +92,16 @@ namespace SpaceStrategy.Class.Regular
 
         }
 
-        public void OnAddUnitToPlanetColony(int planetInd, int colonyInd, int buildingInd, int unitChoosenInd)
+        public void OnAddUnitToPlanetColony(Building b, UnitType ut)
         {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingInd == -1 ||
-                unitChoosenInd == -1)
+            if(b == null || ut == null)
             {
                 return;
             }
-
-            UnitType ut = UnitTypes[unitChoosenInd];
-            Building b = Planets[planetInd].Colonies[colonyInd].Buildings[buildingInd];
 
             b.Add(
-                new Unit(
-                    ut.MaxHealth,
-                    ut.Strength,
-                    ut.Endurance,
-                    $"Unit " + b.Units.Sum(x => 1),
-                    Buildable.State.Destroyed,
-                    ut.TimeToBuildSec,
-                    ut.TimeToDestroySec,
-                    ut.NecessaryResourses
-                    )
+                Unit.Create(ut, b.Units.Count)
                 );
-        }
-
-        public void OnBuildBuildingClick(int planetInd, int colonyInd, int buildingInd)
-        {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingInd == -1)
-            {
-                return;
-            }
-
-            Colony c = Planets[planetInd].Colonies[colonyInd];
-            Building b = c.Buildings[buildingInd];
-
-            b.Build(c.ResourseHolder);
-        }
-
-        public void OnDestroyBuildingClick(int planetInd, int colonyInd, int buildingInd)
-        {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingInd == -1)
-            {
-                return;
-            }
-
-            Colony c = Planets[planetInd].Colonies[colonyInd];
-            Building b = c.Buildings[buildingInd];
-
-            b.Destory();
-        }
-
-        public void OnBuildUnitClick(int planetInd, int colonyInd, int buildingInd, int unitInd)
-        {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingInd == -1 ||
-                unitInd == -1)
-            {
-                return;
-            }
-
-            Colony c = Planets[planetInd].Colonies[colonyInd];
-            Building b = c.Buildings[buildingInd];
-            Unit u = b.Units[unitInd];
-
-            u.Build(c.ResourseHolder);
-        }
-
-        public void OnDestroyUnitClick(int planetInd, int colonyInd, int buildingInd, int unitInd)
-        {
-            if(planetInd == -1 ||
-                colonyInd == -1 ||
-                buildingInd == -1 ||
-                unitInd == -1)
-            {
-                return;
-            }
-
-            Colony c = Planets[planetInd].Colonies[colonyInd];
-            Building b = c.Buildings[buildingInd];
-            Unit u = b.Units[unitInd];
-
-            u.Destory();
         }
     }
 }

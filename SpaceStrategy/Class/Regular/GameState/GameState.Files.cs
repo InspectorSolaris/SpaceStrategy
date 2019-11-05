@@ -52,9 +52,9 @@ namespace SpaceStrategy.Class.Regular
             }
         }
 
-        private static void InitFromFile(string filePath, Action<string[]> addSingleType)
+        private static void InitFromFile(string filePath, Action<Queue<string>> addSingleType)
         {
-            string[] str = File.ReadAllLines(filePath);
+            List<string> str = File.ReadAllLines(filePath).OfType<string>().ToList();
 
             foreach(string s in str)
             {
@@ -77,81 +77,53 @@ namespace SpaceStrategy.Class.Regular
                     ss = ss.Replace(ch, "");
                 }
 
-                string[] args = ss.Split(DelimiterChars);
+                Queue<string> args = new Queue<string>(
+                    ss.Split(DelimiterChars).OfType<string>().ToList()
+                    );
+
                 addSingleType(args);
             }
         }
 
-        private static void AddSingleResourseType(string[] args)
+        private static List<ResourseBunch> ReadNecessaryResourses(Queue<string> args)
         {
-            int ind = 0;
+            List<ResourseBunch> necessaryResourses = new List<ResourseBunch>();
+
+            foreach(Resourse r in Resourses)
+            {
+                necessaryResourses.Add(
+                    new ResourseBunch(r, double.Parse(args.Dequeue()))
+                    );
+            }
+
+            return necessaryResourses;
+        }
+
+        private static void AddSingleResourseType(Queue<string> args)
+        {
             Resourses.Add(
-                new Resourse(
-                    int.Parse(args[ind++]),
-                    args[ind++],
-                    args[ind++]
-                    )
+                Resourse.Create(args)
                 );
         }
 
-        private static void AddSingleColonyType(string[] args)
+        private static void AddSingleColonyType(Queue<string> args)
         {
-            int ind = 0;
-
-            List<ResourseBunch> necessaryResourses = new List<ResourseBunch>();
-
-            foreach(Resourse r in Resourses)
-            {
-                necessaryResourses.Add(
-                    new ResourseBunch(r, double.Parse(args[ind++]))
-                    );
-            }
-
             ColonyTypes.Add(
-                new ColonyType(
-                    double.Parse(args[ind++]),
-                    int.Parse(args[ind++]),
-                    int.Parse(args[ind++]),
-                    args[ind++],
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    necessaryResourses
-                    )
+                ColonyType.Create(args, ReadNecessaryResourses(args))
                 );
         }
 
-        private static void AddSingleStarShipType(string[] args)
+        private static void AddSingleStarShipType(Queue<string> args)
         {
-            int ind = 0;
-
-            List<ResourseBunch> necessaryResourses = new List<ResourseBunch>();
-
-            foreach(Resourse r in Resourses)
-            {
-                necessaryResourses.Add(
-                    new ResourseBunch(r, double.Parse(args[ind++]))
-                    );
-            }
-
             StarShipTypes.Add(
-                new StarShipType(
-                    double.Parse(args[ind++]),
-                    int.Parse(args[ind++]),
-                    int.Parse(args[ind++]),
-                    args[ind++],
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    necessaryResourses
-                    )
+                StarShipType.Create(args, ReadNecessaryResourses(args))
                 );
         }
-        private static void AddSingleBuildingType(string[] args)
+        private static void AddSingleBuildingType(Queue<string> args)
         {
-            int ind = 0;
-
             Building.Type type;
 
-            switch(args[ind++])
+            switch(args.Dequeue())
             {
                 case "HOUSE":
                     type = Building.Type.House;
@@ -166,92 +138,31 @@ namespace SpaceStrategy.Class.Regular
                     throw new Exception("Incorrect BuildingType Init");
             }
 
-            List<ResourseBunch> necessaryResourses = new List<ResourseBunch>();
-
-            foreach(Resourse r in Resourses)
-            {
-                necessaryResourses.Add(
-                    new ResourseBunch(r, double.Parse(args[ind++]))
-                    );
-            }
-
             switch(type)
             {
                 case Building.Type.House:
                     BuildingTypes.Add(
-                        new HouseType(
-                            double.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            args[ind++],
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            necessaryResourses
-                            )
+                        HouseType.Create(args, ReadNecessaryResourses(args))
                         );
                     break;
                 case Building.Type.Mine:
                     BuildingTypes.Add(
-                        new MineType(
-                            int.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            args[ind++],
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            necessaryResourses
-                            )
+                        MineType.Create(args, ReadNecessaryResourses(args))
                         );
                     break;
                 case Building.Type.Factory:
                     BuildingTypes.Add(
-                        new FactoryType(
-                            int.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            double.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            int.Parse(args[ind++]),
-                            args[ind++],
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                            necessaryResourses
-                            )
+                        FactoryType.Create(args, ReadNecessaryResourses(args))
                         );
                     break;
                 default:
                     throw new Exception("Incorrect BuildingType Init");
             }
         }
-        private static void AddSingleUnitType(string[] args)
+        private static void AddSingleUnitType(Queue<string> args)
         {
-            int ind = 0;
-
-            List<ResourseBunch> necessaryResourses = new List<ResourseBunch>();
-
-            foreach(Resourse r in Resourses)
-            {
-                necessaryResourses.Add(
-                    new ResourseBunch(r, double.Parse(args[ind++]))
-                    );
-            }
-
             UnitTypes.Add(
-                new UnitType(
-                    double.Parse(args[ind++]),
-                    double.Parse(args[ind++]),
-                    double.Parse(args[ind++]),
-                    args[ind++],
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    TimeSpan.FromSeconds(double.Parse(args[ind++])),
-                    necessaryResourses
-                    )
+                UnitType.Create(args, ReadNecessaryResourses(args))
                 );
         }
     }

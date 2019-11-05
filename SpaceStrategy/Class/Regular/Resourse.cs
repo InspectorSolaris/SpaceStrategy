@@ -16,6 +16,18 @@ namespace SpaceStrategy.Class.Regular
             this.Description = description;
         }
 
+        public static Resourse Create
+            (
+            Queue<string> args
+            )
+        {
+            return new Resourse(
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                args.Dequeue()
+                );
+        }
+
         public int Id { get; }
 
         public string Name { get; }

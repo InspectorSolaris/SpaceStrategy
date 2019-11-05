@@ -29,6 +29,27 @@ namespace SpaceStrategy.Class.Type.Regular
             this.FactoryRate = factoryRate;
         }
 
+        public static FactoryType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            return new FactoryType(
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public int RawResourseId { get; }
 
         public int ProductResourseId { get; }

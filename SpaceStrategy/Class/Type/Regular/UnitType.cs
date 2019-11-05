@@ -24,6 +24,24 @@ namespace SpaceStrategy.Class.Type.Regular
             this.Endurance = endurance;
         }
 
+        public static UnitType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            int ind = 0;
+
+            return new UnitType(
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public double MaxHealth { get; }
 
         public double Strength { get; }

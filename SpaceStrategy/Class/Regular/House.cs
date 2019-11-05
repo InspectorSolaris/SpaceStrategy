@@ -1,5 +1,6 @@
 ﻿using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Regular.Implementation;
+using SpaceStrategy.Class.Type.Regular;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,28 @@ namespace SpaceStrategy.Class.Regular
                   )
         {
             this.HealRate = healRate;
+        }
+
+        public static House Create
+            (
+            HouseType t, int ind
+            )
+        {
+            return new House(
+                t.HealRate,
+                t.OccupyingSpace,
+                new UnitHolder(
+                    "UnitHolder",
+                    t.MaxUnitsOccupyingSpace,
+                    0,
+                    new List<Unit>()
+                    ),
+                $"House " + ind.ToString("D3"),
+                Buildable.State.Destroyed,
+                t.TimeToBuildSec,
+                t.TimeToDestroySec,
+                t.NecessaryResourses
+                );
         }
 
         public double HealRate { get; }

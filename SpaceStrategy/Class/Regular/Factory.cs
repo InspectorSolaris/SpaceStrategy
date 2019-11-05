@@ -1,8 +1,10 @@
 ﻿using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Regular.Implementation;
+using SpaceStrategy.Class.Type.Regular;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -26,6 +28,33 @@ namespace SpaceStrategy.Class.Regular
             this.FactoryRate = factoryRate;
         }
 
+        public static Factory Create
+            (
+            FactoryType t, int ind
+            )
+        {
+            return new Factory(
+                GameState.Resourses[t.RawResourseId],
+                GameState.Resourses[t.ProductResourseId],
+                t.FactoryRate,
+                t.DamageRate,
+                t.StrengthMultipler,
+                t.EnduranceMultipler,
+                t.OccupyingSpace,
+                new UnitHolder(
+                    "UnitHolder",
+                    t.MaxUnitsOccupyingSpace,
+                    0,
+                    new List<Unit>()
+                    ),
+                $"Factory " + ind.ToString("D3"),
+                State.Destroyed,
+                t.TimeToBuildSec,
+                t.TimeToDestroySec,
+                t.NecessaryResourses
+                );
+        }
+
         public Resourse RawResourse { get; }
 
         public Resourse ProductResourse { get; }
@@ -34,20 +63,41 @@ namespace SpaceStrategy.Class.Regular
 
         public override bool ProduceResourse(ResourseHolder resourseHolderForRaw, ResourseHolder resourseHolderForProduct)
         {
-            if(!IsWorking)
+            if(!IsWorking || BuildingState != State.Builded)
             {
                 return false;
             }
 
             double amount = 0;
 
-            Units.ForEach(u => amount += FactoryRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance));
+            List<Unit> buildedUnits = Units.Where(u => u.BuildingState == State.Builded).ToList();
+
+            buildedUnits.ForEach(u =>
+            {
+                amount += FactoryRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance);
+            }
+            );
 
             bool removed = resourseHolderForRaw.Remove(new ResourseBunch(RawResourse, amount));
             bool added = resourseHolderForProduct.Add(new ResourseBunch(ProductResourse, FactoryRate * amount));
 
             if(removed && added)
             {
+                List<Unit> deadList = new List<Unit>();
+
+                buildedUnits.ForEach(u =>
+                {
+                    u.Damage(DamageRate);
+
+                    if(u.IsDead())
+                    {
+                        deadList.Add(u);
+                    }
+                }
+                );
+
+                Remove(deadList);
+
                 return true;
             }
             if(removed)

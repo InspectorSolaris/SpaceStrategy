@@ -24,6 +24,22 @@ namespace SpaceStrategy.Class.Type.Regular
             this.MaxUnitsOccupyingSpace = maxUnitsOccupyingSpace;
         }
 
+        public static StarShipType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            return new StarShipType(
+                double.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public double Speed { get; }
 
         public int MaxColoniesOccupyingSpace { get; }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,233 +17,107 @@ namespace SpaceStrategy
 {
     public partial class MainForm : Form
     {
+        private static double GameTickRate { get; } = 1;
+
+        private static double UITickRate { get; } = 1;
+
+        private static int SelectedDefault { get; } = -1;
+
         private GameState GameState { get; }
 
         public MainForm()
         {
-            GameState = GameState.GenerateNew(21, 10);
+            GameState = GameState.GenerateNew();
 
             InitializeComponent();
             InitializeGame();
 
             MainGameLoop.RunWorkerAsync();
+            UIUpdater.RunWorkerAsync();
         }
 
         private void InitializeGame()
         {
-            SetStaticDataSources();
-            SetDynamicDataSources();
+            Planets.DataSource = GameState.Planets;
+
+            AddStarShip.DataSource = GameState.StarShipTypes;
+            AddColony.DataSource = GameState.ColonyTypes;
+            AddBuilding.DataSource = GameState.BuildingTypes;
+            AddUnit.DataSource = GameState.UnitTypes;
         }
 
-        private void SetStaticDataSources()
+        private void UpdateUIList<T>(ListBox listBox, List<T> ts, bool saveSelectedItem = true)
         {
-            Planets.DataSource              = GameState.Planets;
-            ChoosenPlanet.DataSource        = GameState.Planets;
-            AddChoosenColony.DataSource     = GameState.ColonyTypes;
-            AddChoosenStarShip.DataSource   = GameState.StarShipTypes;
-            AddChoosenBuilding.DataSource   = GameState.BuildingTypes;
-            AddChoosenUnit.DataSource       = GameState.UnitTypes;
+            int selectedIndex = -1;
+
+            if(listBox.DataSource == ts && saveSelectedItem)
+            {
+                selectedIndex = listBox.SelectedIndex;
+            }
+
+            listBox.DataSource = null;
+            listBox.DataSource = ts;
+
+            if(!(0 <= selectedIndex && selectedIndex < ts.Count))
+            {
+                selectedIndex = -1;
+            }
+
+            listBox.SelectedIndex = selectedIndex;
         }
 
-        private void SetDynamicDataSourcesNull()
+        private void UpdateUI()
         {
-            Colonies.DataSource = null;
-            PlanetResourses.DataSource = null;
-            Buildings.DataSource = null;
-            StarShips.DataSource = null;
-            ColonyResourses.DataSource = null;
-            ChoosenBuilding.DataSource = null;
-            ChoosenUnit.DataSource = null;
-            Units.DataSource = null;
-            StarShipColonies.DataSource = null;
-            StarShipUnits.DataSource = null;
-            StarShipColonyResourses.DataSource = null;
-        }
+            int SelectedPlanet = Planets.SelectedIndex;
+            int SelectedColony = Colonies.SelectedIndex;
+            int SelectedBuilding = Buildings.SelectedIndex;
 
-        private void SetDynamicDataSources()
-        {
-            if(Planets.SelectedIndex != -1)
+            if(SelectedPlanet != SelectedDefault)
             {
-                Planet p = GameState.Planets[Planets.SelectedIndex];
-
-                Colonies.DataSource         = p.Colonies;
-                PlanetResourses.DataSource  = p.ResourseBunches;
-            }
-            else
-            {
-                Colonies.DataSource         = null;
-                PlanetResourses.DataSource  = null;
+                UpdateUIList(Colonies, GameState.Planets[SelectedPlanet].Colonies);
+                UpdateUIList(PlanetResourses, GameState.Planets[SelectedPlanet].ResourseBunches);
             }
 
-            if(Planets.SelectedIndex != -1 &&
-                Colonies.SelectedIndex != -1)
+            if(SelectedColony != SelectedDefault)
             {
-                Colony c = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex];
-
-                Buildings.DataSource = c.Buildings;
-                StarShips.DataSource = c.StarShips;
-                ColonyResourses.DataSource = c.ResourseBunches;
-                ChoosenBuilding.DataSource = c.Buildings;
-            }
-            else
-            {
-                Buildings.DataSource = null;
-                StarShips.DataSource = null;
-                ColonyResourses.DataSource = null;
-                ChoosenBuilding.DataSource = null;
+                UpdateUIList(Buildings, GameState.Planets[SelectedPlanet].Colonies[SelectedColony].Buildings);
+                UpdateUIList(ColonyResourses, GameState.Planets[SelectedPlanet].Colonies[SelectedColony].ResourseBunches);
             }
 
-            if(Planets.SelectedIndex != -1 &&
-                Colonies.SelectedIndex != -1 &&
-                Buildings.SelectedIndex != -1)
+            if(SelectedBuilding != SelectedDefault)
             {
-                Building b = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].Buildings[Buildings.SelectedIndex];
-
-                Units.DataSource = b.Units;
-                ChoosenUnit.DataSource = b.Units;
-            }
-            else
-            {
-                Units.DataSource = null;
-                ChoosenUnit.DataSource = null;
-            }
-
-            if(Planets.SelectedIndex != -1 &&
-                Colonies.SelectedIndex != -1 &&
-                StarShips.SelectedIndex != -1)
-            {
-                StarShip ss = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex];
-
-                StarShipColonies.DataSource = ss.Colonies;
-                StarShipUnits.DataSource    = ss.Units;
-            }
-            else
-            {
-                StarShipColonies.DataSource = null;
-                StarShipUnits.DataSource    = null;
-            }
-
-            if(Planets.SelectedIndex != -1 &&
-                Colonies.SelectedIndex != -1 &&
-                StarShips.SelectedIndex != -1 &&
-                StarShipColonies.SelectedIndex != -1)
-            {
-                Colony c = GameState.Planets[Planets.SelectedIndex].Colonies[Colonies.SelectedIndex].StarShips[StarShips.SelectedIndex].Colonies[StarShipColonies.SelectedIndex];
-
-                StarShipColonyResourses.DataSource = c.ResourseHolder.ResourseBunches;
-            }
-            else
-            {
-                StarShipColonyResourses.DataSource = null;
+                UpdateUIList(Units, GameState.Planets[SelectedPlanet].Colonies[SelectedColony].Buildings[SelectedBuilding].Units);
             }
         }
 
-        private void Planets_SelectedIndexChanged(object sender, EventArgs e)
+        private async void MainGameLoop_DoWork(object sender, DoWorkEventArgs e)
         {
-            SetDynamicDataSources();
-        }
+            Stopwatch stopwatch = new Stopwatch();
 
-        private void Colonies_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDynamicDataSources();
-        }
-
-        private void Buildings_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDynamicDataSources();
-        }
-
-        private void Units_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDynamicDataSources();
-        }
-
-        private void StarShips_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDynamicDataSources();
-        }
-
-        private void StarShipColonies_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void StarShipUnits_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AddChoosenColony_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AddChoosenStarShip_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AddChoosenBuilding_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AddChoosenUnit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ChoosenPlanet_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ChoosenBuilding_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MainGameLoop_DoWork(object sender, DoWorkEventArgs e)
-        {
             while(true)
             {
+                stopwatch.Restart();
+
                 GameState.GameTick();
+
+                stopwatch.Stop();
+
+                await Task.Delay(TimeSpan.FromSeconds(1.0 / GameTickRate) - stopwatch.Elapsed);
             }
         }
 
-        private void AddBuildingToPlanetColony_Click(object sender, EventArgs e)
+        private async void UIUpdater_DoWork(object sender, DoWorkEventArgs e)
         {
-            GameState.OnAddBuildingToPlanetColony(Planets.SelectedIndex, Colonies.SelectedIndex, AddChoosenBuilding.SelectedIndex);
-        }
+            await Task.Delay(TimeSpan.FromSeconds(0.125));
 
-        private void AddUnitToColonyBuilding_Click(object sender, EventArgs e)
-        {
-            GameState.OnAddUnitToPlanetColony(Planets.SelectedIndex, Colonies.SelectedIndex, Buildings.SelectedIndex, AddChoosenUnit.SelectedIndex);
-        }
+            while(true)
+            {
+                this.Invoke(new Action(
+                    () => UpdateUI()
+                    ));
 
-        private void Buildings_DoubleClick(object sender, EventArgs e)
-        {
-            GameState.OnBuildingsDoubleClick(Planets.SelectedIndex, Colonies.SelectedIndex, Buildings.SelectedIndex);
-        }
-
-        private void BuildBuilding_Click(object sender, EventArgs e)
-        {
-            GameState.OnBuildBuildingClick(Planets.SelectedIndex, Colonies.SelectedIndex, ChoosenBuilding.SelectedIndex);
-        }
-
-        private void DestroyBuilding_Click(object sender, EventArgs e)
-        {
-            GameState.OnDestroyBuildingClick(Planets.SelectedIndex, Colonies.SelectedIndex, ChoosenBuilding.SelectedIndex);
-        }
-
-        private void BuildUnit_Click(object sender, EventArgs e)
-        {
-            GameState.OnBuildUnitClick(Planets.SelectedIndex, Colonies.SelectedIndex, Buildings.SelectedIndex, ChoosenUnit.SelectedIndex);
-        }
-
-        private void DestroyUnit_Click(object sender, EventArgs e)
-        {
-            GameState.OnDestroyUnitClick(Planets.SelectedIndex, Colonies.SelectedIndex, Buildings.SelectedIndex, ChoosenUnit.SelectedIndex);
+                await Task.Delay(TimeSpan.FromSeconds(1.0 / UITickRate));
+            }
         }
     }
 }

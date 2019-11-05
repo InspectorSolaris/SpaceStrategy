@@ -25,6 +25,22 @@ namespace SpaceStrategy.Class.Type.Regular
             this.HealRate = healRate;
         }
 
+        public static HouseType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            return new HouseType(
+                double.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public double HealRate { get; }
 
         public override string ToString()

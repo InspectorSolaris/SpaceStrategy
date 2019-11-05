@@ -28,6 +28,26 @@ namespace SpaceStrategy.Class.Type.Regular
             this.MineRate = mineRate;
         }
 
+        public static MineType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            return new MineType(
+                int.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                double.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public int MiningResourseId { get; }
 
         public double MineRate { get; }

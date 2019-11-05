@@ -24,6 +24,22 @@ namespace SpaceStrategy.Class.Type.Regular
             this.MaxBuildingsOccupyingSpace = maxBuildingsOccupyingSpace;
         }
 
+        public static ColonyType Create
+            (
+            Queue<string> args, List<ResourseBunch> necessaryResourses
+            )
+        {
+            return new ColonyType(
+                double.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                int.Parse(args.Dequeue()),
+                args.Dequeue(),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                TimeSpan.FromSeconds(double.Parse(args.Dequeue())),
+                necessaryResourses
+                );
+        }
+
         public double MaxResoursesOccupyingSpace { get; }
 
         public int MaxStarShipsOccupyingSpace { get; }

@@ -46,6 +46,8 @@ namespace SpaceStrategy.Class.Abstract
             {
                 BuildingState = State.Building;
 
+                NecessaryResourses.ForEach(r => resourseSource.FindByResourseId(r.Resourse.Id).Remove(r.Amount));
+
                 await Task.Delay(TimeToBuildSec);
 
                 BuildingState = State.Builded;

@@ -1,8 +1,10 @@
 ﻿using SpaceStrategy.Class.Abstract;
 using SpaceStrategy.Class.Regular.Implementation;
+using SpaceStrategy.Class.Type.Regular;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace SpaceStrategy.Class.Regular
 {
@@ -25,20 +27,61 @@ namespace SpaceStrategy.Class.Regular
             this.MineRate = mineRate;
         }
 
+        public static Mine Create
+            (
+            MineType t, int ind
+            )
+        {
+            return new Mine(
+                GameState.Resourses[t.MiningResourseId],
+                t.MineRate,
+                t.DamageRate,
+                t.StrengthMultipler,
+                t.EnduranceMultipler,
+                t.OccupyingSpace,
+                new UnitHolder(
+                    "UnitHolder",
+                    t.MaxUnitsOccupyingSpace,
+                    0,
+                    new List<Unit>()
+                    ),
+                $"Mine " + ind.ToString("D3"),
+                State.Destroyed,
+                t.TimeToBuildSec,
+                t.TimeToDestroySec,
+                t.NecessaryResourses
+                );
+        }
+
         public Resourse MiningResourse { get; }
 
         public double MineRate { get; }
 
         public override bool ProduceResourse(ResourseHolder resourseHolderForRaw, ResourseHolder resourseHolderForProduct)
         {
-            if(!IsWorking)
+            if(!IsWorking || BuildingState != State.Builded)
             {
                 return false;
             }
 
             double amount = 0;
 
-            Units.ForEach(u => amount += MineRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance));
+            List<Unit> deadList = new List<Unit>();
+            List<Unit> buildedUnits = Units.Where(u => u.BuildingState == State.Builded).ToList();
+
+            buildedUnits.ForEach(u =>
+            {
+                amount += MineRate * (StrengthMultipler * u.Strength + EnduranceMultipler * u.Endurance);
+                u.Damage(DamageRate);
+
+                if(u.IsDead())
+                {
+                    deadList.Add(u);
+                }
+            }
+            );
+
+            Remove(deadList);
 
             return resourseHolderForRaw.Move(new ResourseBunch(MiningResourse, amount), resourseHolderForProduct);
         }

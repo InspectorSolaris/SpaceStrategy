@@ -99,6 +99,12 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainForm.OnClickEvents.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.OnSelectedIndexChangedEvents.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
