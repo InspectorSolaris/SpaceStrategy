@@ -122,18 +122,7 @@ namespace SpaceStrategy.Class.Regular
                 {
                     foreach(Building b in c.Buildings)
                     {
-                        switch(b.BuildingType)
-                        {
-                            case Building.Type.House:
-                                ((House)b).Heal();
-                                break;
-                            case Building.Type.Mine:
-                                ((Mine)b).ProduceResourse(p.ResourseHolder, c.ResourseHolder);
-                                break;
-                            case Building.Type.Factory:
-                                ((Factory)b).ProduceResourse(c.ResourseHolder, c.ResourseHolder);
-                                break;
-                        }
+                        b.BuildingWork(p.ResourseHolder, c.ResourseHolder);
                     }
                 }
             }

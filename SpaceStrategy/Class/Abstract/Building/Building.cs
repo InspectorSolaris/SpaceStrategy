@@ -33,6 +33,22 @@ namespace SpaceStrategy.Class.Abstract
 
         public int OccupyingSpace { get; }
 
+        public void BuildingWork(ResourseHolder p, ResourseHolder c)
+        {
+            switch(BuildingType)
+            {
+                case Type.House:
+                    ((House)this).Heal();
+                    break;
+                case Type.Mine:
+                    ((Mine)this).ProduceResourse(p, c);
+                    break;
+                case Type.Factory:
+                    ((Factory)this).ProduceResourse(c, c);
+                    break;
+            }
+        }
+
         public override string ToString()
         {
             string result = "Unknown";
